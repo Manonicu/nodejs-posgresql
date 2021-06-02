@@ -6,7 +6,7 @@ const sharp = require("sharp")
 
 router.get('/', function (req, res, next) {
   const logos = fs.readdirSync(path.join(__dirname, '../../public/logos'));
-  const data = logos.map(logo => ({ name: logo.split(".")[0], route: `https://apis-kohl.vercel.app/logos/${logo}` }));
+  const data = logos.map(logo => ({ name: logo.split(".")[0], route: `https://apis.manon.icu/logos/${logo}` }));
   res.json({
     code: 0,
     data
@@ -21,7 +21,7 @@ router.post('/', async function (req, res, next) {
     res.json({ code:1,data:null})
   }
   sharp(fileBuffer).toFile(path.join(__dirname, `../../public/logos/${filename}.${filetype}`), (err, info) => {
-      res.json({code:0,data:`https://apis-kohl.vercel.app/logos/${filename}.${filetype}`})
+      res.json({code:0,data:`https://apis.manon.icu/logos/${filename}.${filetype}`})
   })
 })
 
