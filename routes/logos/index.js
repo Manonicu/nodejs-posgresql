@@ -3,10 +3,11 @@ const router = express.Router();
 const fs = require("fs");
 const path = require("path")
 const sharp = require("sharp")
+const HOST = process.env.HOST ||"https://apis.manon.icu"
 
 router.get('/', function (req, res, next) {
   const logos = fs.readdirSync(path.join(__dirname, '../../public/logos'));
-  const data = logos.map(logo => ({ name: logo.split(".")[0], route: `https://apis.manon.icu/logos/${logo}` }));
+  const data = logos.map(logo => ({ name: logo.split(".")[0], route: `${HOST}/logos/${logo}` }));
   res.json({
     code: 0,
     data
@@ -15,13 +16,24 @@ router.get('/', function (req, res, next) {
 
 router.post('/', async function (req, res, next) {
   const { filename,filetype } = req.body;
-  console.log(filename,filetype)
+  console.log(filename, filetype)
+  if (filetype === 'svg') {
+    res.json({ code: 0, data: `${HOST}/logos/${filename}.${filetype}` })
+    return;
+  }
+
   const fileBuffer = Buffer.from(fs.readFileSync(path.join(__dirname, `../../public/logos/${filename}.svg`).toString()));
   if (!fileBuffer) {
     res.json({ code:1,data:null})
   }
+  if (filetype === 'jpg') {
+    sharp(fileBuffer).flatten({background:"#FFFFFF"}).toFile(path.join(__dirname, `../../public/logos/${filename}.${filetype}`), (err, info) => {
+      res.json({code:0,data:`${HOST}/logos/${filename}.${filetype}`})
+    })
+    return;
+  }
   sharp(fileBuffer).toFile(path.join(__dirname, `../../public/logos/${filename}.${filetype}`), (err, info) => {
-      res.json({code:0,data:`https://apis.manon.icu/logos/${filename}.${filetype}`})
+      res.json({code:0,data:`${HOST}/logos/${filename}.${filetype}`})
   })
 })
 

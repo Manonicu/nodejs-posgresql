@@ -9,6 +9,8 @@ var logosRouter = require('./routes/logos/index');
 
 var app = express();
 
+require("dotenv").config()
+
 app.use(cors())
 app.use(logger('dev'));
 app.use(express.json());
