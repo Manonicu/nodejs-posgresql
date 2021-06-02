@@ -13,8 +13,8 @@ router.get('/', function (req, res, next) {
   });
 });
 
-router.get('/convert', async function (req, res, next) {
-  const { filename,filetype } = req.query;
+router.post('/', async function (req, res, next) {
+  const { filename,filetype } = req.body;
   console.log(filename,filetype)
   const fileBuffer = Buffer.from(fs.readFileSync(path.join(__dirname, `../../public/logos/${filename}.svg`).toString()));
   if (!fileBuffer) {
