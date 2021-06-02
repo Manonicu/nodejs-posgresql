@@ -7,7 +7,7 @@ const HOST = process.env.HOST ||"https://apis.manon.icu"
 
 router.get('/', function (req, res, next) {
   const logos = fs.readdirSync(path.join(__dirname, '../../public/logos'));
-  const data = logos.map(logo => ({ name: logo.split(".")[0], route: `${HOST}/logos/${logo}` }));
+  const data = logos.filter(logo=>logo.endsWith(".svg")).map(logo => ({ name: logo.split(".")[0], route: `${HOST}/logos/${logo}` }));
   res.json({
     code: 0,
     data
@@ -15,26 +15,47 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/', async function (req, res, next) {
-  const { filename,filetype } = req.body;
-  console.log(filename, filetype)
+  const { filename, filetype } = req.body;
+
+  let fileBuffer = Buffer.from(fs.readFileSync(path.join(__dirname, `../../public/logos/${filename}.svg`).toString()));
   if (filetype === 'svg') {
-    res.json({ code: 0, data: `${HOST}/logos/${filename}.${filetype}` })
+    res.json({ code: 0, data: fileBuffer })
+    return;
+  } else if (filetype === 'jpg') {
+    const result = await sharp(fileBuffer).flatten({background:"#ffffff"}).jpeg({ mozjpeg: true,quality:75 }).toBuffer();
+    res.json({ code: 0, data: result })
+    return;
+  } else if (filetype === 'png') {
+    const result = await sharp(fileBuffer).png({quality:90}).toBuffer();
+    res.json({ code: 0, data: result })
+    return;
+  } else {
+    const result = await sharp(fileBuffer).webp({ lossless: true }).toBuffer();
+    res.json({ code: 0, data: result })
     return;
   }
 
-  const fileBuffer = Buffer.from(fs.readFileSync(path.join(__dirname, `../../public/logos/${filename}.svg`).toString()));
-  if (!fileBuffer) {
-    res.json({ code:1,data:null})
-  }
-  if (filetype === 'jpg') {
-    sharp(fileBuffer).flatten({background:"#FFFFFF"}).toFile(path.join(__dirname, `../../public/logos/${filename}.${filetype}`), (err, info) => {
-      res.json({code:0,data:`${HOST}/logos/${filename}.${filetype}`})
-    })
-    return;
-  }
-  sharp(fileBuffer).toFile(path.join(__dirname, `../../public/logos/${filename}.${filetype}`), (err, info) => {
-      res.json({code:0,data:`${HOST}/logos/${filename}.${filetype}`})
-  })
+
+  // if (!fileBuffer) {
+  //   res.json({ code:1,data:null})
+  // }
+  // if (filetype === 'jpg') {
+  //   sharp(fileBuffer).flatten({background:"#FFFFFF"}).toFile(path.join(__dirname, `../../public/logos/${filename}.${filetype}`), (err, info) => {
+  //     res.json({code:0,data:`${HOST}/logos/${filename}.${filetype}`})
+  //   })
+  //   return;
+  // }
+  // const result = await sharp(fileBuffer).png().toBuffer();
+  // console.log(result)
+  // res.json({code:0,data:result})
+  // // sharp(fileBuffer).toBuffer(), (err, info) => {
+  // //   console.log(info,"info")
+  // //     res.json({code:0,data:`${HOST}/logos/${filename}.${filetype}`})
+  // // })
+  // // sharp(fileBuffer).toFile(path.join(__dirname, `../../public/logos/${filename}.${filetype}`), (err, info) => {
+  // //   console.log(info,"info")
+  // //     res.json({code:0,data:`${HOST}/logos/${filename}.${filetype}`})
+  // // })
 })
 
 module.exports = router;
