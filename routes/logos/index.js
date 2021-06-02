@@ -20,8 +20,8 @@ router.get('/convert', async function (req, res, next) {
   if (!fileBuffer) {
     res.json({ code:1,data:null})
   }
-  sharp(fileBuffer).toFile(path.join(__dirname, `../../temp/logos/${filename}.${filetype}`), (err, info) => {
-      res.json({code:0,data:`https://apis-kohl.vercel.app/temp/logos/${filename}.${filetype}`})
+  sharp(fileBuffer).toFile(path.join(__dirname, `../../public/logos/${filename}.${filetype}`), (err, info) => {
+      res.json({code:0,data:`https://apis-kohl.vercel.app/public/logos/${filename}.${filetype}`})
   })
 })
 
