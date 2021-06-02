@@ -16,21 +16,20 @@ router.get('/', function (req, res, next) {
 
 router.post('/', async function (req, res, next) {
   const { filename, filetype } = req.body;
-
-  let fileBuffer = Buffer.from(fs.readFileSync(path.join(__dirname, `../../public/logos/${filename}.svg`).toString()));
+  const _buffer = Buffer.from(fs.readFileSync(path.join(__dirname, `../../public/logos/${filename}.svg`)));
   if (filetype === 'svg') {
-    res.json({ code: 0, data: fileBuffer })
+    res.json({ code: 0, data: _buffer })
     return;
   } else if (filetype === 'jpg') {
-    const result = await sharp(fileBuffer).flatten({background:"#ffffff"}).jpeg({ mozjpeg: true,quality:75 }).toBuffer();
+    const result = await sharp(_buffer).flatten({background:"#ffffff"}).jpeg({ mozjpeg: true,quality:75 }).toBuffer();
     res.json({ code: 0, data: result })
     return;
   } else if (filetype === 'png') {
-    const result = await sharp(fileBuffer).png({quality:90}).toBuffer();
+    const result = await sharp(_buffer).png({quality:90}).toBuffer();
     res.json({ code: 0, data: result })
     return;
   } else {
-    const result = await sharp(fileBuffer).webp({ lossless: true }).toBuffer();
+    const result = await sharp(_buffer).webp({ lossless: true }).toBuffer();
     res.json({ code: 0, data: result })
     return;
   }
