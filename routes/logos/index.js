@@ -33,28 +33,11 @@ router.post('/', async function (req, res, next) {
     res.json({ code: 0, data: result })
     return;
   }
+})
 
-
-  // if (!fileBuffer) {
-  //   res.json({ code:1,data:null})
-  // }
-  // if (filetype === 'jpg') {
-  //   sharp(fileBuffer).flatten({background:"#FFFFFF"}).toFile(path.join(__dirname, `../../public/logos/${filename}.${filetype}`), (err, info) => {
-  //     res.json({code:0,data:`${HOST}/logos/${filename}.${filetype}`})
-  //   })
-  //   return;
-  // }
-  // const result = await sharp(fileBuffer).png().toBuffer();
-  // console.log(result)
-  // res.json({code:0,data:result})
-  // // sharp(fileBuffer).toBuffer(), (err, info) => {
-  // //   console.log(info,"info")
-  // //     res.json({code:0,data:`${HOST}/logos/${filename}.${filetype}`})
-  // // })
-  // // sharp(fileBuffer).toFile(path.join(__dirname, `../../public/logos/${filename}.${filetype}`), (err, info) => {
-  // //   console.log(info,"info")
-  // //     res.json({code:0,data:`${HOST}/logos/${filename}.${filetype}`})
-  // // })
+router.post('/upload', async function (req, res, next) {
+  console.log(req.body)
+  res.json({})
 })
 
 module.exports = router;
