@@ -24,7 +24,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", require("./routes"));
 app.use("/logos", require("./routes/logos"));
 app.use("/novels", require("./routes/novels"));
-app.use('/openai', require('./routes/openai'));
-app.use('/weather', require('./routes/weather'));
+app.use("/openai", require("./routes/openai"));
+app.use("/weather", require("./routes/weather"));
+app.use("/musik", require("./routes/musik"));
 
 module.exports = app;
